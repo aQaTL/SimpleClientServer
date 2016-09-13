@@ -46,7 +46,9 @@ public class SimpleServer
 
 	public List<String> getUsers()
 	{
-		return connections.stream().map(SimpleConnection::getNickName).collect(Collectors.toList());
+		return connections.stream()
+				.map(SimpleConnection::getNickName)
+				.collect(Collectors.toList());
 	}
 
 	public static void main(String[] args)
