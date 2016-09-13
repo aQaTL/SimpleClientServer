@@ -3,6 +3,7 @@ package com.aqatl.simpleclientserver.server;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.List;
 import java.util.Scanner;
 
 /**
@@ -11,13 +12,15 @@ import java.util.Scanner;
 public class SimpleConnection implements Runnable, MessageListener
 {
 	private Socket socket;
+	private SimpleServer server;
 	private MessageListener msgListener;
 	private PrintWriter out;
 	private String nickName;
 
-	public SimpleConnection(Socket socket, MessageListener msgListener) throws IOException
+	public SimpleConnection(Socket socket, SimpleServer server, MessageListener msgListener) throws IOException
 	{
 		this.socket = socket;
+		this.server = server;
 		this.msgListener = msgListener;
 		out = new PrintWriter(socket.getOutputStream(), true);
 	}
@@ -31,12 +34,34 @@ public class SimpleConnection implements Runnable, MessageListener
 			askForNickName(remoteIn);
 			while (remoteIn.hasNextLine())
 			{
-				msgListener.sendMessage(this, remoteIn.nextLine());
+				String line = remoteIn.nextLine();
+
+				if (line.startsWith("/"))
+					parseCommand(line.substring(1).toLowerCase());
+				else
+					msgListener.sendMessage(this, line);
 			}
 		}
 		catch (IOException e)
 		{
 			e.printStackTrace();
+		}
+	}
+
+	private void parseCommand(String command) throws IOException
+	{
+		switch (command)
+		{
+			case "users":
+				server.getUsers().forEach(out::println);
+				break;
+			case "exit":
+				socket.close();
+				break;
+
+			default:
+				out.println("Invalid command");
+				break;
 		}
 	}
 
@@ -57,4 +82,5 @@ public class SimpleConnection implements Runnable, MessageListener
 	{
 		return nickName;
 	}
+
 }

@@ -4,7 +4,9 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
 /**
  * Created by Maciej on 10.09.2016.
@@ -26,13 +28,12 @@ public class SimpleServer
 			});
 			int connectionsCount = 0;
 
-			Scanner nickNameScanner;
 			while(true)
 			{
 				Socket clientConnection = serverSocket.accept();
 				System.out.println("Connection #" + ++connectionsCount + " from " + clientConnection.getInetAddress());
 
-				SimpleConnection connection = new SimpleConnection(clientConnection, mainMessageListener);
+				SimpleConnection connection = new SimpleConnection(clientConnection, this, mainMessageListener);
 				connections.add(connection);
 				new Thread(connection).start();
 			}
@@ -41,6 +42,11 @@ public class SimpleServer
 		{
 			e.printStackTrace();
 		}
+	}
+
+	public List<String> getUsers()
+	{
+		return connections.stream().map(SimpleConnection::getNickName).collect(Collectors.toList());
 	}
 
 	public static void main(String[] args)
