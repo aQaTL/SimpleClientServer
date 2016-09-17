@@ -30,7 +30,12 @@ public class SimpleClient
 			Scanner stdIn = new Scanner(System.in);
 			while(stdIn.hasNextLine())
 			{
-				out.println(stdIn.nextLine());
+				String msg = stdIn.nextLine();
+				out.println(msg);
+				if(msg.equals("/exit"))
+				{
+					System.exit(0);
+				}
 			}
 		}
 	}

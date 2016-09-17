@@ -57,6 +57,7 @@ public class SimpleConnection implements Runnable, MessageListener
 				break;
 			case "exit":
 				socket.close();
+				server.userExited(this);
 				break;
 
 			default:
@@ -76,6 +77,11 @@ public class SimpleConnection implements Runnable, MessageListener
 	public void sendMessage(SimpleConnection source, String message)
 	{
 		out.println(source.getNickName() + " -> " + message);
+	}
+
+	public void serverMessage(String message)
+	{
+		out.println("SERVER -> " + message);
 	}
 
 	public String getNickName()

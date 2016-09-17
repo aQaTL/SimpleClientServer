@@ -55,5 +55,11 @@ public class SimpleServer
 	{
 		SimpleServer server = new SimpleServer();
 	}
+
+	public void userExited(SimpleConnection connection)
+	{
+		connections.remove(connection);
+		connections.forEach(conn -> conn.serverMessage(connection.getNickName() + " exited"));
+	}
 }
 
